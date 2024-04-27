@@ -22,8 +22,8 @@
 // Include skeleton file
 #include "xdp_with_md.skel.h"
 
-#define ONE_MILLION 1000000
-#define ONE_BILLION 1000000000
+#define ONE_MILLION 1000000.0
+#define ONE_BILLION 1000000000.0
 
 struct datarec {
     __u64 rx_packets;
@@ -86,15 +86,18 @@ void poll_stats(struct xdp_with_md_bpf *skel) {
         }
 
         if (value.rx_packets > prev[0]) {
-            rate = (value.rx_packets - prev[0]) / ONE_MILLION;
-            log_info("%10llu pkt/s (%.2f Mpps)", (value.rx_packets - prev[0]) / 1, rate);
+            rate = (float)(value.rx_packets - prev[0]) / (float)ONE_MILLION;
+            log_info("%10llu pkt/s (%.2f Mpps)", value.rx_packets - prev[0], rate);
         }
 
         if (value.rx_bytes > prev[1]) {
-            bit_rate = (((value.rx_bytes - prev[1]) / 1.0) * 8) / ONE_BILLION;
-            log_info("%10llu byte/s (%.2f Gbps)", (value.rx_bytes - prev[1]) / 1,
+            bit_rate = (float)((value.rx_bytes - prev[1]) * 8) / (float)ONE_BILLION;
+            log_info("%10llu byte/s (%.2f Gbps)", value.rx_bytes - prev[1],
                      bit_rate);
         }
+
+        prev[0] = value.rx_packets;
+        prev[1] = value.rx_bytes;
 
         sleep(1);
     }
