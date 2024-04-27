@@ -10,6 +10,6 @@
 [submodule "libs/liblog"]
 	path = libs/liblog
 	url = https://github.com/rxi/log.c.git
-[submodule "libs/libcyam"]
-	path = libs/libcyam
+[submodule "libs/libcyaml"]
+	path = libs/libcyaml
 	url = https://github.com/tlsa/libcyaml.git
