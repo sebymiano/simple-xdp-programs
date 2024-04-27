@@ -83,8 +83,8 @@ $(LIBBPF_OBJ): $(wildcard $(LIBBPF_SRC)/*.[ch] $(LIBBPF_SRC)/Makefile) | $(OUTPU
 	$(call msg,LIB,$@)
 	$(Q)$(MAKE) -C $(LIBBPF_SRC) BUILD_STATIC_ONLY=1		      \
 		    OBJDIR=$(dir $@)/libbpf DESTDIR=$(dir $@)		      \
-		    INCLUDEDIR= LIBDIR= UAPIDIR=			      \
-		    install
+		    INCLUDEDIR= LIBDIR= UAPIDIR=uapi						  \
+		    install install_uapi_headers
 
 # Build bpftool
 $(BPFTOOL): | $(BPFTOOL_OUTPUT)

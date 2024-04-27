@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.gpl": "gnuplot",
+        "bpf.h": "c"
+    }
+}
