@@ -1,6 +1,16 @@
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
 #include <stddef.h>
+#include <linux/if_ether.h>
+#include <linux/if_packet.h>
+#include <linux/ip.h>
+#include <linux/ipv6.h>
+#include <linux/icmp.h>
+#include <linux/icmpv6.h>
+#include <linux/udp.h>
+#include <linux/tcp.h>
+#include <linux/in.h>
+#include <bpf/bpf_endian.h>
 #include <stdint.h>
 
 #include "xdp_metadata.h"
@@ -23,29 +33,48 @@ struct {
 
 SEC("xdp")
 int xdp_prog_map(struct xdp_md *ctx) {
-    void *data_end = (void *)(long)ctx->data_end;
-    void *data = (void *)(long)ctx->data;
-
-    void *data_meta;
+    void *data, *data_meta, *data_end;
+	struct ipv6hdr *ip6h = NULL;
+	struct ethhdr *eth = NULL;
+	struct udphdr *udp = NULL;
+	struct iphdr *iph = NULL;
+	struct xdp_meta *meta;
+	__u64 rx_timestamp = -1;
+	int ret;
 
     struct datarec *rec;
-    int key = 0;
 
-    struct xdp_meta *meta;
+	data = (void *)(long)ctx->data;
+	data_end = (void *)(long)ctx->data_end;
+
+    __u64 bytes = data_end - data;
     
-    /* Reserve enough for all custom metadata. */
+	eth = data;
+	if (eth + 1 < data_end) {
+		if (eth->h_proto == bpf_htons(ETH_P_IP)) {
+			iph = (void *)(eth + 1);
+			if (iph + 1 < data_end && iph->protocol == IPPROTO_UDP)
+				udp = (void *)(iph + 1);
+		}
+		if (eth->h_proto == bpf_htons(ETH_P_IPV6)) {
+			ip6h = (void *)(eth + 1);
+			if (ip6h + 1 < data_end && ip6h->nexthdr == IPPROTO_UDP)
+				udp = (void *)(ip6h + 1);
+		}
+		if (udp && udp + 1 > data_end)
+			udp = NULL;
+	}
 
-	int ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(struct xdp_meta));
+	if (!udp)
+		return XDP_PASS;
+
+	/* Reserve enough for all custom metadata. */
+
+	ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(struct xdp_meta));
 	if (ret != 0)
 		return XDP_DROP;
 
-
-    rec = bpf_map_lookup_elem(&xdp_stats_map, &key);
-    if (!rec) {
-        return XDP_ABORTED;
-    }
-
-    data = (void *)(long)ctx->data;
+	data = (void *)(long)ctx->data;
 	data_meta = (void *)(long)ctx->data_meta;
 
 	if (data_meta + sizeof(struct xdp_meta) > data)
@@ -53,7 +82,12 @@ int xdp_prog_map(struct xdp_md *ctx) {
 
 	meta = data_meta;
 
-    uint64_t rx_timestamp;
+	/* Export metadata. */
+
+	/* We expect veth bpf_xdp_metadata_rx_timestamp to return 0 HW
+	 * timestamp, so put some non-zero value into AF_XDP frame for
+	 * the userspace.
+	 */
 
     int err = bpf_xdp_metadata_rx_timestamp(ctx, &rx_timestamp);
     if (err) {
@@ -64,7 +98,14 @@ int xdp_prog_map(struct xdp_md *ctx) {
         bpf_printk("Got rx timestamp: %llu\n", rx_timestamp);
     }
 
-    __u64 bytes = data_end - data;
+    int key = 0;
+
+    rec = bpf_map_lookup_elem(&xdp_stats_map, &key);
+    if (!rec) {
+        bpf_printk("Failed to lookup in xdp_stats_map\n");
+        return XDP_ABORTED;
+    }
+
     __sync_fetch_and_add(&rec->rx_packets, 1);
     __sync_fetch_and_add(&rec->rx_bytes, bytes);
 
