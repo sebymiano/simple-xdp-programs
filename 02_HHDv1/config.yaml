@@ -1,0 +1,11 @@
+---
+ips:
+  - ip: 10.0.0.1
+    threshold: 10
+    port: 1
+  - ip: 10.0.0.2
+    threshold: 20
+    port: 2
+  - ip: 10.0.0.3
+    threshold: 30
+    port: 3

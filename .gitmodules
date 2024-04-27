@@ -1,0 +1,15 @@
+[submodule "libs/libbpf"]
+	path = libs/libbpf
+	url = https://github.com/libbpf/libbpf.git
+[submodule "libs/bpftool"]
+	path = libs/bpftool
+	url = https://github.com/libbpf/bpftool.git
+[submodule "libs/libargparse"]
+	path = libs/libargparse
+	url = https://github.com/cofyc/argparse.git
+[submodule "libs/liblog"]
+	path = libs/liblog
+	url = https://github.com/rxi/log.c.git
+[submodule "libs/libcyam"]
+	path = libs/libcyam
+	url = https://github.com/tlsa/libcyaml.git
