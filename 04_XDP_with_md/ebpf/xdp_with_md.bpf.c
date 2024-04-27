@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "xdp_metadata.h"
+
 extern int bpf_xdp_metadata_rx_timestamp(const struct xdp_md *ctx,
                                          __u64 *timestamp) __ksym;
 
@@ -24,14 +26,32 @@ int xdp_prog_map(struct xdp_md *ctx) {
     void *data_end = (void *)(long)ctx->data_end;
     void *data = (void *)(long)ctx->data;
 
+    void *data_meta;
+
     struct datarec *rec;
     int key = 0;
+
+    struct xdp_meta *meta;
     
+    /* Reserve enough for all custom metadata. */
+
+	int ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(struct xdp_meta));
+	if (ret != 0)
+		return XDP_DROP;
+
 
     rec = bpf_map_lookup_elem(&xdp_stats_map, &key);
     if (!rec) {
         return XDP_ABORTED;
     }
+
+    data = (void *)(long)ctx->data;
+	data_meta = (void *)(long)ctx->data_meta;
+
+	if (data_meta + sizeof(struct xdp_meta) > data)
+		return XDP_DROP;
+
+	meta = data_meta;
 
     uint64_t rx_timestamp;
 
