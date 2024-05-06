@@ -70,19 +70,19 @@ function download_and_install_mlnx_ofed {
     curl -L "https://content.mellanox.com/ofed/${MLNX_OFED_VERSION}/${MLNX_OFED_FILE}" | tar xz -C . --strip-components=2
 
     if [ -z ${MLNX_OFED_APT+x} ]; then
+        echo -e "${COLOR_GREEN}Installing Mellanox OFED manually${COLOR_OFF}"
+        
+        $SUDO ./mlnxofedinstall --with-mft --with-mstflint --dpdk --upstream-libs
+
+        popd
+    else
         echo -e "${COLOR_GREEN}Installing Mellanox OFED using apt${COLOR_OFF}"
 
         echo "deb file:/opt/mlnx-ofed/DEBS ./" | sudo tee /etc/apt/sources.list.d/mlnx_ofed.list
         wget -qO - http://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | sudo apt-key add -
         $SUDO apt update
         $SUDO apt install -y mlnx-ofed-all
-        return
-    else
-        echo -e "${COLOR_GREEN}Installing Mellanox OFED manually${COLOR_OFF}"
         
-        $SUDO ./mlnxofedinstall --with-mft --with-mstflint --dpdk --upstream-libs
-
-        popd
     fi
 }
 
@@ -144,7 +144,6 @@ while getopts :aqh option; do
     case "${option}" in
     a)
         MLNX_OFED_APT=1
-        echo "Advanced installation options"
         ;;
     q)
         QUIET=1

@@ -31,6 +31,10 @@ pc.defineParameter("linkSpeed", "Link Speed", portal.ParameterType.INTEGER, 1000
                    longDescription="A specific link speed to use for your lan. Normally the resource " +
                    "mapper will choose for you based on node availability and the optional physical type.")
 
+pc.defineParameter("llvm-version", "LLVM version", portal.ParameterType.STRING, "15",
+                    advanced=True,
+                    longDescription="Specify the version of LLVM to install. Default is 12.")
+
 pc.defineParameter("ofedAPT",  "Install OFED via APT", portal.ParameterType.BOOLEAN, False,
                     advanced=True,
                     longDescription="By default, we run the OFED installer script. If you want to use the APT package, check this box.")
@@ -49,11 +53,7 @@ dut.hardware_type = params.phystype
 link1 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
 link2 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
 
-if params.ofedAPT:
-    pktgen.addService(pg.Execute(shell="bash", command='/local/repository/profiles/setup-pktgen.sh -a'))
-else:
-    pktgen.addService(pg.Execute(shell="bash", command='/local/repository/profiles/setup-pktgen.sh'))
-
-dut.addService(pg.Execute(shell="sh", command="/local/repository/upgrade-kernel.sh -q"))
+pktgen.addService(pg.Execute(shell="bash", command=f'/local/repository/profiles/setup-pktgen.sh {"-a" if params.ofedAPT else ""}'))
+dut.addService(pg.Execute(shell="bash", command=f'/local/repository/profiles/setup-dut.sh {"-a" if params.ofedAPT else ""} -l {params.llvm_version}'))
 
 portal.context.printRequestRSpec()
