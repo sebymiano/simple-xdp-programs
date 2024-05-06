@@ -7,14 +7,9 @@ COLOR_OFF='\033[0m' # No Color
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-DPDK_REPLAY_GIT_REPO_URL=https://github.com/sebymiano/dpdk-burst-replay.git
-DPDK_REPLAY_GIT_BRANCH=morpheus
-MOONGEN_GIT_REPO_URL=https://github.com/emmericp/MoonGen.git
-MOOGEN_COMMIT_SHA=25c61ee76b9ca30b83ecdeef8af2c7f89625cb4e
-
 UBUNTU_SUGGESTED_VERSION=22.04
 
-DEPS_DIR=$DIR/deps
+DEPS_DIR=/opt
 
 function print_system_info {
     echo -e "${COLOR_GREEN}***********************SYSTEM INFO*************************************"
@@ -55,8 +50,8 @@ function download_and_install_mlnx_ofed {
 
     # Set MLNX_OFED_VERSION and MLNX_OFED_FILE based on Ubuntu version
     if [ "$UBUNTU_VERSION" = "22.04" ]; then
-        MLNX_OFED_VERSION=MLNX_OFED-24.01-0.3.3.1
-        MLNX_OFED_FILE=MLNX_OFED_LINUX-24.01-0.3.3.1-ubuntu22.04-x86_64.tgz
+        MLNX_OFED_VERSION=MLNX_OFED-24.04-0.6.6.0
+        MLNX_OFED_FILE=MLNX_OFED_LINUX-24.04-0.6.6.0-ubuntu22.04-x86_64.tgz
     else
         # If the Ubuntu version is not 22.04, set the default values
         MLNX_OFED_VERSION=MLNX_OFED-23.04-1.1.3.0
@@ -171,6 +166,7 @@ set -e
 check_ubuntu_version
 
 $SUDO apt update
+$SUDO apt full-upgrade -y
 PACKAGES=""
 PACKAGES+=" git-lfs python3 python3-pip python3-setuptools python3-wheel python3-pyelftools ninja-build" # DPDK
 PACKAGES+=" libnuma-dev libelf-dev libcap-dev libpcap-dev libjansson-dev libipsec-mb-dev"                # DPDK
