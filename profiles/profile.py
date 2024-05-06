@@ -54,7 +54,7 @@ link1 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
 link2 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
 
 pktgen_cmd = '/local/repository/profiles/setup-pktgen.sh'
-dut_cmd = f'/local/repository/profiles/setup-dut.sh'
+dut_cmd = '/local/repository/profiles/setup-dut.sh'
 if params.ofedAPT:
     pktgen_cmd += ' -a'
     dut_cmd += ' -a'
