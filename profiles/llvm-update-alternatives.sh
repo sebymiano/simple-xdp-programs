@@ -27,4 +27,5 @@ update-alternatives --install \
         --slave /usr/bin/llvm-rtdyld llvm-rtdyld /usr/bin/llvm-rtdyld-$1 \
         --slave /usr/bin/llvm-size llvm-size /usr/bin/llvm-size-$1 \
         --slave /usr/bin/llvm-stress llvm-stress /usr/bin/llvm-stress-$1 \
-        --slave /usr/bin/llvm-tblgen llvm-tblgen /usr/bin/llvm-tblgen-$1
+        --slave /usr/bin/llvm-tblgen llvm-tblgen /usr/bin/llvm-tblgen-$1 \
+        --slave /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-$1

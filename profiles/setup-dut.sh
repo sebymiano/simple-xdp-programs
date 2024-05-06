@@ -197,7 +197,7 @@ $SUDO apt update
 PACKAGES=""
 PACKAGES+=" git-lfs python3 git python3-pip python3-setuptools python3-wheel python3-pyelftools ninja-build" # DPDK
 PACKAGES+=" libnuma-dev libelf-dev libcap-dev libpcap-dev libjansson-dev libipsec-mb-dev"                    # DPDK
-PACKAGES+=" autoconf libcsv-dev"                                                                             # DPDK burst replay
+PACKAGES+=" autoconf libcsv-dev libbfd-dev"                                                                  # DPDK burst replay
 PACKAGES+=" pciutils build-essential cmake linux-headers-$(uname -r) libnuma-dev libtbb2"                    # Moongen
 PACKAGES+=" tmux texlive-font-utils pdf2svg poppler-utils pkg-config net-tools bash tcpreplay"               # utility libraries
 PACKAGES+=" gnuplot"                                                                                         # for generating figures
@@ -210,6 +210,8 @@ fi
 
 download_and_install_mlnx_ofed
 download_and_install_llvm ${LLVM_VERSION}
+
+$SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq llvm clang llvm-dev"
 
 if git rev-parse --git-dir >/dev/null 2>&1; then
     git submodule init
