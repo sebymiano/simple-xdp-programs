@@ -53,8 +53,8 @@ dut.hardware_type = params.phystype
 link1 = request.Link(members = [pktgen, dut])
 link2 = request.Link(members = [pktgen, dut])
 
-pktgen_cmd = '/local/repository/profiles/setup-pktgen.sh'
-dut_cmd = '/local/repository/profiles/setup-dut.sh'
+pktgen_cmd = 'sudo /local/repository/profiles/setup-pktgen.sh'
+dut_cmd = 'sudo /local/repository/profiles/setup-dut.sh'
 if params.ofedAPT:
     pktgen_cmd += ' -a'
     dut_cmd += ' -a'
