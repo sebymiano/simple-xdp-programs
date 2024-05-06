@@ -89,6 +89,7 @@ function download_and_install_mlnx_ofed {
 }
 
 function download_and_install_bpftool {
+    sudo rm -rf /opt/bpftool
     git clone https://github.com/libbpf/bpftool.git --recurse-submodules /opt/bpftool
     pushd /opt/bpftool
     make -C src
