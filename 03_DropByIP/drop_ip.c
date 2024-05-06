@@ -37,6 +37,10 @@ static const char *const usages[] = {
     NULL,
 };
 
+static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args) {
+    return vfprintf(stderr, format, args);
+}
+
 int load_maps_config(const char *config_file, struct drop_ip_bpf *skel) {
     struct ips *ips;
     cyaml_err_t err;
@@ -193,6 +197,11 @@ int main(int argc, const char **argv) {
         exit(1);
     }
 
+    libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
+
+    /* Set up libbpf errors and debug info callback */
+    libbpf_set_print(libbpf_print_fn);
+
     get_iface_ifindex(iface1, iface2);
 
     /* Open BPF application */
@@ -241,7 +250,7 @@ int main(int argc, const char **argv) {
 
     err = attach_bpf_progs(xdp_flags, skel);
     if (err) {
-        log_fatal("Error while attaching BPF programs");
+        log_fatal("Error while attaching BPF programs: %s", strerror(errno));
         goto cleanup;
     }
 
