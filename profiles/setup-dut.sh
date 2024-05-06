@@ -138,6 +138,7 @@ function download_and_install_llvm {
 }
 
 function download_and_install_xdptools {
+    sudo rm -rf /opt/xdp-tools
     git clone https://github.com/xdp-project/xdp-tools.git --recurse-submodules /opt/xdp-tools
     pushd /opt/xdp-tools
 
