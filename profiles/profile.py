@@ -60,7 +60,7 @@ if params.ofedAPT:
     dut_cmd += ' -a'
 
 if params.llvm_version:
-    dut_cmd += f' -l {params.llvm_version}'
+    dut_cmd += ' -l ' + params.llvm_version
 
 pktgen.addService(pg.Execute(shell="bash", command=pktgen_cmd))
 dut.addService(pg.Execute(shell="bash", command=dut_cmd))
