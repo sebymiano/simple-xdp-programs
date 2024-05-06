@@ -50,8 +50,8 @@ pktgen.hardware_type = params.phystype
 dut.hardware_type = params.phystype
 
 # Create a link between the two nodes
-link1 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
-link2 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
+link1 = request.Link(members = [pktgen, dut], bandwidth=params.linkSpeed)
+link2 = request.Link(members = [pktgen, dut], bandwidth=params.linkSpeed)
 
 pktgen_cmd = '/local/repository/profiles/setup-pktgen.sh'
 dut_cmd = '/local/repository/profiles/setup-dut.sh'
