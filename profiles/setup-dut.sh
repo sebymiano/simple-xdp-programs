@@ -52,6 +52,10 @@ function clone_polycube_repo {
 }
 
 function download_and_install_mlnx_ofed {
+    if [ -f "/opt/mlnx-ofed/ofed_installed" ]; then
+      return
+    fi
+
     # Detect Ubuntu version
     UBUNTU_VERSION=$(lsb_release -rs)
 
@@ -86,6 +90,8 @@ function download_and_install_mlnx_ofed {
         $SUDO apt install -y mlnx-ofed-all
 
     fi
+
+    $SUDO touch /opt/mlnx-ofed/ofed_installed
 }
 
 function download_and_install_bpftool {
@@ -211,8 +217,6 @@ fi
 
 download_and_install_mlnx_ofed
 download_and_install_llvm ${LLVM_VERSION}
-
-$SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq llvm clang llvm-dev"
 
 if git rev-parse --git-dir >/dev/null 2>&1; then
     git submodule init
