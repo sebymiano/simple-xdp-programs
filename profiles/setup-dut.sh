@@ -74,7 +74,7 @@ function download_and_install_mlnx_ofed {
     if [ -z ${MLNX_OFED_APT+x} ]; then
         echo -e "${COLOR_GREEN}Installing Mellanox OFED manually${COLOR_OFF}"
 
-        $SUDO ./mlnxofedinstall --with-mft --with-mstflint --dpdk --upstream-libs
+        $SUDO ./mlnxofedinstall --with-mft --with-mstflint --dpdk --upstream-libs -q
 
         popd
     else
@@ -96,7 +96,7 @@ function download_and_install_bpftool {
     popd
 }
 
-function install_llvm {
+function download_and_install_llvm {
     # Check if there is an argument
     if [ -z "$1" ]; then
         echo "No LLVM version supplied"
