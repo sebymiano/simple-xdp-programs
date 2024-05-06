@@ -29,4 +29,4 @@ update-alternatives --install \
         --slave /usr/bin/llvm-stress llvm-stress /usr/bin/llvm-stress-$1 \
         --slave /usr/bin/llvm-tblgen llvm-tblgen /usr/bin/llvm-tblgen-$1 \
         --slave /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-$1 \
-        --slabe /usr/bin/llc llc /usr/bin/llc-$1 
+        --slave /usr/bin/llc llc /usr/bin/llc-$1 
