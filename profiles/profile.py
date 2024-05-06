@@ -31,7 +31,7 @@ pc.defineParameter("linkSpeed", "Link Speed", portal.ParameterType.INTEGER, 1000
                    longDescription="A specific link speed to use for your lan. Normally the resource " +
                    "mapper will choose for you based on node availability and the optional physical type.")
 
-pc.defineParameter("llvm-version", "LLVM version", portal.ParameterType.STRING, "15",
+pc.defineParameter("llvmVersion", "LLVM version", portal.ParameterType.STRING, "15",
                     advanced=True,
                     longDescription="Specify the version of LLVM to install. Default is 12.")
 
@@ -59,8 +59,8 @@ if params.ofedAPT:
     pktgen_cmd += ' -a'
     dut_cmd += ' -a'
 
-if params.llvm_version:
-    dut_cmd += ' -l ' + params.llvm_version
+if params.llvmVersion:
+    dut_cmd += ' -l ' + params.llvmVersion
 
 pktgen.addService(pg.Execute(shell="bash", command=pktgen_cmd))
 dut.addService(pg.Execute(shell="bash", command=dut_cmd))
