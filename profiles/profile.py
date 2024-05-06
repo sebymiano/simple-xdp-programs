@@ -53,7 +53,9 @@ dut.hardware_type = params.phystype
 link1 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
 link2 = request.Link(members = [pktgen, dut], linkSpeed=params.linkSpeed)
 
-pktgen.addService(pg.Execute(shell="bash", command=f'/local/repository/profiles/setup-pktgen.sh {"-a" if params.ofedAPT else ""}'))
-dut.addService(pg.Execute(shell="bash", command=f'/local/repository/profiles/setup-dut.sh {"-a" if params.ofedAPT else ""} -l {params.llvm_version}'))
+pktgen_cmd = f'/local/repository/profiles/setup-pktgen.sh {"-a" if params.ofedAPT else ""}'
+dut_cmd = f'/local/repository/profiles/setup-dut.sh {"-a" if params.ofedAPT else ""} -l {params.llvm_version}'
+pktgen.addService(pg.Execute(shell="bash", command=pktgen_cmd))
+dut.addService(pg.Execute(shell="bash", command=dut_cmd))
 
 portal.context.printRequestRSpec()
