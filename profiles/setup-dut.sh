@@ -10,6 +10,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 UBUNTU_SUGGESTED_VERSION=22.04
 
 LLVM_VERSION=15
+INSTALL_MLNX_OFED=1
 
 function print_system_info {
     echo -e "${COLOR_GREEN}***********************SYSTEM INFO*************************************"
@@ -159,13 +160,16 @@ Morpheus installation script
     echo
 }
 
-while getopts :lah option; do
+while getopts :laoh option; do
     case "${option}" in
     l)
         LLVM_VERSION=${OPTARG}
         ;;
     a)
         MLNX_OFED_APT=1
+        ;;
+    o)  
+        INSTALL_MLNX_OFED=0
         ;;
     h | \?)
         show_help
@@ -217,7 +221,11 @@ if ! command -v meson &>/dev/null; then
     $SUDO pip3 install meson
 fi
 
-download_and_install_mlnx_ofed
+# check if INSTALL_MLNX_OFED is set to 1
+if [ $INSTALL_MLNX_OFED -eq 1 ]; then
+    echo -e "${COLOR_GREEN}Installing Mellanox OFED${COLOR_OFF}"
+    download_and_install_mlnx_ofed
+fi
 download_and_install_llvm ${LLVM_VERSION}
 
 if git rev-parse --git-dir >/dev/null 2>&1; then
