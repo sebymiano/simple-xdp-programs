@@ -10,10 +10,10 @@ struct datarec {
 };
 
 struct {
-    __uint(type, BPF_MAP_TYPE_ARRAY);
+    __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
     __type(key, int);
     __type(value, struct datarec);
-    __uint(max_entries, 1024);
+    __uint(max_entries, 1);
 } xdp_stats_map SEC(".maps");
 
 SEC("xdp")

@@ -66,27 +66,40 @@ void poll_stats(struct counting_with_maps_bpf *skel) {
         exit(1);
     }
 
+    struct datarec old_values = {0};
+
     while(true) {
         /* TODO 2: define the value type (struct datarec) */
-        struct datarec value;
+        int cpus = libbpf_num_possible_cpus();
+        struct datarec values[cpus];
+        struct datarec tot_values = {0};
         int key = 0;
         int err = 0;
         
         /* TODO 4: get the value of the map for the key 0 */
-        err = bpf_map_lookup_elem(map_fd, &key, &value);
+        err = bpf_map_lookup_elem(map_fd, &key, &values);
         if (err != 0) {
             log_fatal("Error while retrieving the value from the map");
             exit(1);
         }
 
-        if (value.rx_packets == 0 && value.rx_bytes == 0) {
+        for (int i = 0; i < cpus; i++) {
+            tot_values.rx_packets += values[i].rx_packets;
+            tot_values.rx_bytes += values[i].rx_bytes;
+        }
+
+
+        if (tot_values.rx_packets == 0 && tot_values.rx_bytes == 0) {
             continue;
         }
         
         /* TODO 5: print the number of packets received */
-        log_info("Number of packets received: %llu", value.rx_packets);
+        log_info("Number of packets received: %llu", tot_values.rx_packets - old_values.rx_packets);
         /* TODO 6: print the number of bytes received */
-        log_info("Number of bytes received: %llu", value.rx_bytes);
+        log_info("Number of bytes received: %llu", tot_values.rx_bytes - old_values.rx_bytes);
+
+        old_values.rx_packets = tot_values.rx_packets;
+        old_values.rx_bytes = tot_values.rx_bytes;
         sleep(1);
     }
 }
