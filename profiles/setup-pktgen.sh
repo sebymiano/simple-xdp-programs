@@ -174,6 +174,7 @@ PACKAGES+=" autoconf libcsv-dev"                                                
 PACKAGES+=" pciutils build-essential cmake linux-headers-$(uname -r) libnuma-dev libtbb2"                # Moongen
 PACKAGES+=" tmux texlive-font-utils pdf2svg poppler-utils pkg-config net-tools bash tcpreplay"           # utility libraries
 PACKAGES+=" gnuplot gcc-12 libc6-dev-i386 libbfd-dev"                                                    # for generating figures
+PACKAGES+=" libtraceevent-dev libbabeltrace-dev libzstd-dev liblzma-dev libperl-dev libslang2-dev libunwind-dev systemtap-sdt-dev libdw-dev libelf-dev"
 
 $SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq $PACKAGES"
 
