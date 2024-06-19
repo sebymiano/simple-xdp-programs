@@ -167,6 +167,9 @@ check_ubuntu_version
 
 $SUDO apt update
 $SUDO apt full-upgrade -y
+
+$SUDO add-apt-repository ppa:cappelikan/ppa
+$SUDO apt update
 PACKAGES=""
 PACKAGES+=" git-lfs python3 python3-pip python3-setuptools python3-wheel python3-pyelftools ninja-build" # DPDK
 PACKAGES+=" libnuma-dev libelf-dev libcap-dev libpcap-dev libjansson-dev libipsec-mb-dev"                # DPDK
@@ -175,6 +178,7 @@ PACKAGES+=" pciutils build-essential cmake linux-headers-$(uname -r) libnuma-dev
 PACKAGES+=" tmux texlive-font-utils pdf2svg poppler-utils pkg-config net-tools bash tcpreplay"           # utility libraries
 PACKAGES+=" gnuplot gcc-12 libc6-dev-i386 libbfd-dev"                                                    # for generating figures
 PACKAGES+=" libtraceevent-dev libbabeltrace-dev libzstd-dev liblzma-dev libperl-dev libslang2-dev libunwind-dev systemtap-sdt-dev libdw-dev libelf-dev"
+PACKAGES+=" mainline"
 
 $SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq $PACKAGES"
 
