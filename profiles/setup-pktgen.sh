@@ -173,7 +173,7 @@ PACKAGES+=" libnuma-dev libelf-dev libcap-dev libpcap-dev libjansson-dev libipse
 PACKAGES+=" autoconf libcsv-dev"                                                                         # DPDK burst replay
 PACKAGES+=" pciutils build-essential cmake linux-headers-$(uname -r) libnuma-dev libtbb2"                # Moongen
 PACKAGES+=" tmux texlive-font-utils pdf2svg poppler-utils pkg-config net-tools bash tcpreplay"           # utility libraries
-PACKAGES+=" gnuplot gcc-12 libc6-dev-i386"                                                                                     # for generating figures
+PACKAGES+=" gnuplot gcc-12 libc6-dev-i386 libbfd-dev"                                                    # for generating figures
 
 $SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq $PACKAGES"
 
