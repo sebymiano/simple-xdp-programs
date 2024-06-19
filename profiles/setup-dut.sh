@@ -10,7 +10,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 UBUNTU_SUGGESTED_VERSION=22.04
 
 LLVM_VERSION=15
-INSTALL_MLNX_OFED=1
+INSTALL_MLNX_OFED=0
 
 function print_system_info {
     echo -e "${COLOR_GREEN}***********************SYSTEM INFO*************************************"
@@ -160,7 +160,7 @@ Morpheus installation script
     echo
 }
 
-while getopts :laoh option; do
+while getopts :l:aoh option; do
     case "${option}" in
     l)
         LLVM_VERSION=${OPTARG}
@@ -169,7 +169,7 @@ while getopts :laoh option; do
         MLNX_OFED_APT=1
         ;;
     o)  
-        INSTALL_MLNX_OFED=0
+        INSTALL_MLNX_OFED=1
         ;;
     h | \?)
         show_help
