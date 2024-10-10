@@ -124,6 +124,32 @@ function configure_dpdk_hugepages {
     popd
 }
 
+function install_pktgen_dpdk {
+    PKTGEN_DPDK_DIR=${DEPS_DIR}/Pktgen-DPDK
+
+    if [ -f "$DEPS_DIR/pktgen_dpdk_installed" ]; then
+        return
+    fi
+
+    rm -rf "$PKTGEN_DPDK_DIR"
+
+    pushd .
+    cd "$DEPS_DIR"
+    echo -e "${COLOR_GREEN}[ INFO ] Download Pktgen-DPDK ${COLOR_OFF}"
+    git clone https://github.com/pktgen/Pktgen-DPDK.git
+    
+    cd ${PKTGEN_DPDK_DIR}
+    meson build
+    cd build
+    ninja
+    $SUDO ninja install
+
+    echo -e "${COLOR_GREEN}Pktgen-DPDK is installed ${COLOR_OFF}"
+    popd
+
+    touch "${DEPS_DIR}/pktgen_dpdk_installed"
+}
+
 trap error_message ERR
 
 function show_help() {
@@ -177,7 +203,7 @@ PACKAGES+=" autoconf libcsv-dev"                                                
 PACKAGES+=" pciutils build-essential cmake linux-headers-$(uname -r) libnuma-dev libtbb2"                # Moongen
 PACKAGES+=" tmux texlive-font-utils pdf2svg poppler-utils pkg-config net-tools bash tcpreplay"           # utility libraries
 PACKAGES+=" gnuplot gcc-12 libc6-dev-i386 libbfd-dev"                                                    # for generating figures
-PACKAGES+=" libtraceevent-dev libbabeltrace-dev libzstd-dev liblzma-dev libperl-dev libslang2-dev libunwind-dev systemtap-sdt-dev libdw-dev libelf-dev"
+PACKAGES+=" libtraceevent-dev libbabeltrace-dev libzstd-dev liblzma-dev libperl-dev libslang2-dev libunwind-dev systemtap-sdt-dev libdw-dev libelf-dev libbsd-dev"
 PACKAGES+=" mainline"
 
 $SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq $PACKAGES"
@@ -194,5 +220,9 @@ echo -e "${COLOR_GREEN}All dependencies installed, let's configure DPDK.${COLOR_
 configure_dpdk_hugepages
 
 echo -e "${COLOR_GREEN}Hugepages created.${COLOR_OFF}"
+
+install_pktgen_dpdk
+
+echo -e "${COLOR_GREEN}Pktgen-DPDK installed.${COLOR_OFF}"
 
 success_message
