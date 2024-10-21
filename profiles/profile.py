@@ -1,7 +1,8 @@
-"""This profile allocates two bare metal nodes and connects them directly together via a layer1 link. 
+"""This is a Cloudlab profile to run the test for XDP.
 
 Instructions:
-Click on any node in the topology and choose the `shell` menu item. When your shell window appears, use `ping` to test the link."""
+Wait for the profile instance to start, it will then install the mellanox OFED packages and the DPDK packages on the pktgen, while the necessary XDP tools are installed on the DUT.
+"""
 
 # Import the Portal object.
 import geni.portal as portal
