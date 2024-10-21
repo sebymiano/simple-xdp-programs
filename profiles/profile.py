@@ -26,8 +26,13 @@ dut = request.RawPC("dut")
 
 # Optional physical type for nodes.
 pc.defineParameter("phystype",  "Optional physical node type",
-                   portal.ParameterType.STRING, "r650",
+                   portal.ParameterType.STRING, "sm110p",
                    longDescription="Specify a physical node type (c220g1,xl170,etc).")
+
+pc.defineParameter("phystype", "Switch type",
+                   portal.ParameterType.STRING, "dell-s4048",
+                   [('mlnx-sn2410', 'Mellanox SN2410'),
+                    ('dell-s4048',  'Dell S4048')])
 
 # Optional link speed, normally the resource mapper will choose for you based on node availability
 pc.defineParameter("linkSpeed", "Link Speed", portal.ParameterType.INTEGER, 100000000,
@@ -47,6 +52,14 @@ dut.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU22-64-STD"
 pktgen.hardware_type = params.phystype
 dut.hardware_type = params.phystype
 
+# Add Switch to the request and give it a couple of interfaces
+mysw = request.Switch("mysw")
+mysw.hardware_type = params.phystype
+swiface_n1if1 = mysw.addInterface()
+swiface_n2if1 = mysw.addInterface()
+swiface_n1if2 = mysw.addInterface()
+swiface_n2if2 = mysw.addInterface()
+
 # Add interfaces to the nodes.
 iface1_node1 = pktgen.addInterface("n1if1")
 iface2_node1 = pktgen.addInterface("n1if2")
@@ -54,14 +67,21 @@ iface2_node1 = pktgen.addInterface("n1if2")
 iface1_node2 = dut.addInterface("n2if1")
 iface2_node2 = dut.addInterface("n2if2")
 
-# Add two L1 links (back-to-back connections) between node1 and node2.
-link1 = request.L1Link("link1")
+link1 = request.L1Link("link_n1if1")
 link1.addInterface(iface1_node1)
-link1.addInterface(iface1_node2)
+link1.addInterface(swiface_n1if1)
 
-link2 = request.L1Link("link2")
+link2 = request.L1Link("link_n1if2")
 link2.addInterface(iface2_node1)
-link2.addInterface(iface2_node2)
+link2.addInterface(swiface_n1if2)
+
+link3 = request.L1Link("link_n2if1")
+link3.addInterface(iface1_node2)
+link3.addInterface(swiface_n2if1)
+
+link4 = request.L1Link("link_n2if2")
+link4.addInterface(iface2_node2)
+link4.addInterface(swiface_n2if2)
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)
